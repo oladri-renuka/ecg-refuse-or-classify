@@ -6,7 +6,7 @@ seed: 0
 output_dir: runs
 
 data:
-  root: data/raw/ptb-xl-a-large-publicly-available-electrocardiography-dataset-1.0.3   # `make data` passes the located root explicitly
+  root: data/raw/ptb-xl-1.0.3   # filled by `make data` (S3 mirror)
   cache_dir: data/processed
   sampling_rate: 100
   bandpass: false          # 0.5-40 Hz Butterworth (order 3) ablation

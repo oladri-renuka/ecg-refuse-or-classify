@@ -7,20 +7,26 @@ CLF    ?= runs/c2_resnet1d/seed0/best.pt
 AE     ?= runs/autoencoder/seed0/best.pt
 TRAIN   = $(PY) -m ptbxl_ecg.train
 
-.PHONY: setup data test baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
+.PHONY: setup data data-zip test baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
 
 setup:            ## install training env
 	pip install -e ".[dev]"
 
+PTBXL_S3      = s3://physionet-open/ptb-xl/1.0.3/
+PTBXL_ROOT    = data/raw/ptb-xl-1.0.3
 PTBXL_ZIP_URL = https://physionet.org/content/ptb-xl/get-zip/1.0.3/
-PTBXL_ZIP     = data/raw/ptb-xl-1.0.3.zip
 
-data:             ## download PTB-XL 1.0.3 as one ZIP (~1.7 GB, CC BY 4.0) and build the 100 Hz cache
+data:             ## PTB-XL 1.0.3 (CC BY 4.0) from PhysioNet's public S3 mirror, 100 Hz only, then build the cache
+	# physionet.org throttles to ~1 MB/min from cloud pods; the S3 mirror is the same files.
+	# `sync` is incremental, so rerunning after an interruption only fetches what is missing.
+	command -v aws >/dev/null || $(PY) -m pip install -q awscli
+	aws s3 sync --no-sign-request --only-show-errors --exclude "records500/*" $(PTBXL_S3) $(PTBXL_ROOT)
+	$(PY) -m ptbxl_ecg.data.ptbxl --config configs/base.yaml --root $(PTBXL_ROOT)
+
+data-zip:         ## fallback: single ZIP from physionet.org (slow from cloud IPs), then build the cache
 	mkdir -p data/raw
-	# single-file ZIP: far faster than `wget -r` over ~65k individual files; -c resumes
-	wget -c --progress=dot:giga -O $(PTBXL_ZIP) $(PTBXL_ZIP_URL)
-	[ -n "$$(find data/raw -name ptbxl_database.csv -print -quit)" ] || $(PY) -m zipfile -e $(PTBXL_ZIP) data/raw
-	# locate the dataset root instead of assuming the ZIP's folder name
+	wget -c --progress=dot:giga -O data/raw/ptb-xl-1.0.3.zip $(PTBXL_ZIP_URL)
+	[ -n "$$(find data/raw -name ptbxl_database.csv -print -quit)" ] || $(PY) -m zipfile -e data/raw/ptb-xl-1.0.3.zip data/raw
 	$(PY) -m ptbxl_ecg.data.ptbxl --config configs/base.yaml \
 	  --root "$$(dirname "$$(find data/raw -name ptbxl_database.csv -print -quit)")"
 
