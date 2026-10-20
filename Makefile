@@ -12,9 +12,17 @@ TRAIN   = $(PY) -m ptbxl_ecg.train
 setup:            ## install training env
 	pip install -e ".[dev]"
 
-data:             ## download PTB-XL 1.0.3 (~1.7 GB, CC BY 4.0) and build the 100 Hz cache
-	wget -r -N -c -np -q --show-progress -P data/raw https://physionet.org/files/ptb-xl/1.0.3/
-	$(PY) -m ptbxl_ecg.data.ptbxl --config configs/base.yaml
+PTBXL_ZIP_URL = https://physionet.org/content/ptb-xl/get-zip/1.0.3/
+PTBXL_ZIP     = data/raw/ptb-xl-1.0.3.zip
+
+data:             ## download PTB-XL 1.0.3 as one ZIP (~1.7 GB, CC BY 4.0) and build the 100 Hz cache
+	mkdir -p data/raw
+	# single-file ZIP: far faster than `wget -r` over ~65k individual files; -c resumes
+	wget -c --progress=dot:giga -O $(PTBXL_ZIP) $(PTBXL_ZIP_URL)
+	[ -n "$$(find data/raw -name ptbxl_database.csv -print -quit)" ] || $(PY) -m zipfile -e $(PTBXL_ZIP) data/raw
+	# locate the dataset root instead of assuming the ZIP's folder name
+	$(PY) -m ptbxl_ecg.data.ptbxl --config configs/base.yaml \
+	  --root "$$(dirname "$$(find data/raw -name ptbxl_database.csv -print -quit)")"
 
 test:
 	$(PY) -m pytest -q
