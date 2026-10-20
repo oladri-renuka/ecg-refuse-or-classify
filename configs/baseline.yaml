@@ -1,0 +1,13 @@
+# B0: honest baseline. Handcrafted features (lead statistics, band powers,
+# rhythm, median-beat template) + gradient-boosted trees, one model per class.
+inherit: base.yaml
+name: b0_features_hgb
+experiment: B0
+task: baseline
+baseline:
+  model: hgb                # hgb | logreg
+  max_iter: 400
+  learning_rate: 0.05
+  max_leaf_nodes: 31
+  l2_regularization: 1.0
+  early_stopping: true

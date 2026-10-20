@@ -1,0 +1,44 @@
+# Shared defaults. Every experiment config inherits from this file.
+name: base
+experiment: none
+task: classifier          # classifier | autoencoder | baseline
+seed: 0
+output_dir: runs
+
+data:
+  root: data/raw/physionet.org/files/ptb-xl/1.0.3   # where wget puts PTB-XL
+  cache_dir: data/processed
+  sampling_rate: 100
+  bandpass: false          # 0.5-40 Hz Butterworth (order 3) ablation
+  train_folds: [1, 2, 3, 4, 5, 6, 7, 8]
+  val_folds: [9]
+  test_folds: [10]
+  train_fraction: 1.0      # C3: fraction of folds 1-8 used for training
+  subset_seed: 0           # fixed so all model seeds see the same subset
+  crop_len: 250            # 2.5 s random crops at train time
+  eval_stride: 125         # sliding-window stride at val/test time
+
+augment:
+  amp_scale: [0.9, 1.1]
+  noise_p: 0.5
+  noise_sigma: [0.01, 0.05]   # in standardized units
+  wander_p: 0.5
+  wander_freq_hz: [0.05, 0.5]
+  wander_amp: [0.0, 0.3]      # in standardized units
+  lead_dropout_p: 0.1
+
+train:
+  epochs: 50
+  batch_size: 128
+  lr: 1.0e-3
+  weight_decay: 1.0e-2
+  pos_weight: false          # per-class neg/pos weighting in BCE
+  patience: 8                # early stopping on val macro AUROC
+  eval_batch_size: 256
+  amp: false                 # bf16 autocast on CUDA
+  device: auto               # auto | cuda | mps | cpu
+
+tracking:
+  backend: mlflow            # mlflow | wandb | none
+  project: ptbxl-ecg-quality-gate
+  tracking_uri: null         # e.g. sqlite:///mlflow.db; null = MLflow default

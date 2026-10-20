@@ -1,0 +1,5 @@
+inherit: baseline.yaml
+name: b0_features_logreg
+baseline:
+  model: logreg
+  C: 0.1

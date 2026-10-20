@@ -1,0 +1,16 @@
+# C6: synthetic corruption of test signals in raw mV space (before filtering /
+# standardization), at increasing strength.
+experiment: C6
+clf_runs:
+  - runs/c1_resnet1d/seed*
+  - runs/c1_bilstm/seed*
+  - runs/c1_transformer/seed*
+  - runs/c2_resnet1d/seed*
+  - runs/c2_bilstm/seed*
+  - runs/c2_transformer/seed*
+ae_run: runs/autoencoder/seed0      # also report what fraction the gate flags
+corruptions:
+  gaussian_mv: [0.0, 0.02, 0.05, 0.1, 0.2, 0.5]
+  baseline_wander_mv: [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
+  lead_loss: [0, 1, 2, 4, 6]
+seed: 0

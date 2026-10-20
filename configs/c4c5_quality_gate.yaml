@@ -1,0 +1,7 @@
+# C4 (gate AUROC vs metadata noise flags) and C5 (selective classification).
+experiment: C4C5
+ae_runs: runs/autoencoder/seed*
+clf_runs: runs/c2_resnet1d/seed*     # the deployed classifier
+reject_fracs: [0.0, 0.05, 0.10, 0.20]
+curve_max_reject: 0.40
+n_random_draws: 50

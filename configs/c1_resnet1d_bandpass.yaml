@@ -1,0 +1,5 @@
+# Preprocessing ablation: 0.5-40 Hz bandpass before standardization.
+inherit: c1_resnet1d.yaml
+name: c1_resnet1d_bandpass
+data:
+  bandpass: true

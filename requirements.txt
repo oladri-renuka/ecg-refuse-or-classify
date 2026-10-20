@@ -1,0 +1,3 @@
+# Full dev/training environment; equivalent to `pip install -e ".[dev]"`.
+# Serving uses its own slim serve/requirements.txt.
+-e .[dev]

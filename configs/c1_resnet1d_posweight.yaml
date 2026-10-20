@@ -1,0 +1,5 @@
+# Class-imbalance ablation: same as c1_resnet1d but with per-class pos_weight.
+inherit: c1_resnet1d.yaml
+name: c1_resnet1d_posweight
+train:
+  pos_weight: true

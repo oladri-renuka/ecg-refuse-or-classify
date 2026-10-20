@@ -1,0 +1,5 @@
+# Class-imbalance ablation: same as c1_transformer but with per-class pos_weight.
+inherit: c1_transformer.yaml
+name: c1_transformer_posweight
+train:
+  pos_weight: true

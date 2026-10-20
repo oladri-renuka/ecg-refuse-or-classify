@@ -1,0 +1,24 @@
+# C2: shrink each architecture until it fits the CPU latency budget.
+# Run this on the deployment-class CPU (the laptop), NOT on the training GPU box.
+budget_ms: 20
+budget_stat: p95_ms        # p50_ms | p95_ms
+threads: 4
+n_warmup: 20
+n_runs: 200
+select_by: n_params        # largest model under budget (capacity proxy)
+archs:
+  resnet1d:
+    base_config: c1_resnet1d.yaml
+    grid:
+      model.widths: [[16, 32, 64, 128], [32, 64, 128, 256], [48, 96, 192, 384], [64, 128, 256, 512]]
+      model.depths: [[1, 1, 1, 1], [2, 2, 2, 2], [3, 4, 6, 3]]
+  bilstm:
+    base_config: c1_bilstm.yaml
+    grid:
+      model.hidden: [64, 96, 128, 192, 256]
+      model.layers: [1, 2]
+  transformer:
+    base_config: c1_transformer.yaml
+    grid:
+      model.d_model: [64, 128, 192, 256]
+      model.depth: [2, 4, 6, 8]

@@ -1,0 +1,4 @@
+# C3 data-efficiency: launch with --set data.train_fraction=<0.1|0.25|0.5|1.0>
+inherit: c1_bilstm.yaml
+name: "c3_bilstm_frac{data.train_fraction}"
+experiment: C3

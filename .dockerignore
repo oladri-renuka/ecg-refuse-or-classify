@@ -1,0 +1,10 @@
+data/
+runs/
+mlruns/
+mlflow.db
+wandb/
+notebooks/
+reports/
+tests/
+**/__pycache__
+.git

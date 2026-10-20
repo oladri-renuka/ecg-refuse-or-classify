@@ -1,0 +1,10 @@
+inherit: base.yaml
+name: c1_bilstm
+experiment: C1
+model:
+  name: bilstm
+  hidden: 256
+  layers: 2
+  dropout: 0.2
+train:
+  lr: 1.0e-3

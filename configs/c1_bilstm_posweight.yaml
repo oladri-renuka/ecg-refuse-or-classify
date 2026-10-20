@@ -1,0 +1,5 @@
+# Class-imbalance ablation: same as c1_bilstm but with per-class pos_weight.
+inherit: c1_bilstm.yaml
+name: c1_bilstm_posweight
+train:
+  pos_weight: true

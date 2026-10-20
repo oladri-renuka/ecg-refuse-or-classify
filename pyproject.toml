@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ptbxl-ecg"
+version = "0.1.0"
+description = "PTB-XL 12-lead ECG classification with an autoencoder signal-quality gate"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+# Core = what a downstream project needs to load data and run the frozen classifier.
+dependencies = [
+    "torch>=2.2",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.0",
+    "scikit-learn>=1.4",
+    "pyyaml>=6.0",
+    "wfdb>=4.1",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+train = ["mlflow>=2.10", "matplotlib>=3.8", "tabulate>=0.9", "onnx>=1.15", "onnxruntime>=1.17"]
+wandb = ["wandb>=0.16"]
+serve = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "httpx>=0.25", "onnxruntime>=1.17", "gradio>=4.0", "locust>=2.20"]
+dev = ["ptbxl-ecg[train,serve]", "pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]          # repo root, for serve/ (not part of the package)
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]

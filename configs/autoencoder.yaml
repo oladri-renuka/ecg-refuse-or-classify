@@ -1,0 +1,17 @@
+# Quality-gate autoencoder, trained only on folds 1-8 records with all four
+# noise columns empty. Full 10 s records, no augmentation.
+inherit: base.yaml
+name: autoencoder
+experiment: C4
+task: autoencoder
+model:
+  name: autoencoder
+  channels: [32, 64, 128]
+  kernel: 9                  # ~0.4M params
+train:
+  epochs: 40
+  lr: 1.0e-3
+  weight_decay: 0.0
+  patience: 40
+gate:
+  clean_percentile: 95       # threshold = this percentile of clean-val errors

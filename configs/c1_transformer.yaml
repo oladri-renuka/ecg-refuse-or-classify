@@ -1,0 +1,13 @@
+inherit: base.yaml
+name: c1_transformer
+experiment: C1
+model:
+  name: transformer
+  patch: 25
+  d_model: 128
+  depth: 4
+  heads: 4
+  mlp_ratio: 4
+  dropout: 0.1
+train:
+  lr: 3.0e-4
