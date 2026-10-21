@@ -20,6 +20,9 @@ import numpy as np
 
 from serve.pipeline import ECGPipeline
 
+NOISE_LABEL = lambda v: f"Gaussian noise: {v:.2f} mV"  # noqa: E731
+WANDER_LABEL = lambda v: f"Baseline wander: {v:.2f} mV"  # noqa: E731
+SECS_LABEL = lambda v: f"Stream length: {int(v)} s"  # noqa: E731
 LEADS = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
 SHOW_LEADS = ["I", "II", "V2", "V5"]
 CLASS_NAMES = {
@@ -37,11 +40,10 @@ CSS = """
 .gradio-container {max-width: 1600px !important; margin: 0 auto !important; padding: 8px 40px 32px !important;}
 #controls {padding: 6px; border-radius: 14px;}
 #go, #stop {align-self: stretch; min-height: 64px; font-size: 1rem;}
-/* sliders: one-line labels, fixed-width value box, no reset arrow or spinners */
+/* sliders: value shown in the one-line label; number box and reset arrow hidden */
 #controls .reset-button {display: none !important;}
 #controls label span, #controls [data-testid="block-info"] {white-space: nowrap;}
-#controls input[type=number] {width: 64px !important; min-width: 64px; text-align: right; -moz-appearance: textfield;}
-#controls input[type=number]::-webkit-inner-spin-button, #controls input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0;}
+#controls input[type=number] {display: none !important;}
 #probs {min-height: 330px;}
 .section {margin-top: 10px;}
 #hero h1 {font-size: 1.7rem; margin-bottom: 0.2rem;}
@@ -245,9 +247,9 @@ def build(artifacts: str, api: str | None) -> gr.Blocks:
                 go = gr.Button("▶  Start stream", variant="primary", scale=1, min_width=150, elem_id="go")
                 stop = gr.Button("■  Stop", variant="secondary", scale=1, min_width=110, elem_id="stop")
             with gr.Row(equal_height=True):
-                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label="Gaussian noise (mV)", min_width=220)
-                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label="Baseline wander (mV)", min_width=220)
-                secs = gr.Slider(10, 60, value=20, step=1, label="Stream length (s)", min_width=220)
+                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label=NOISE_LABEL(0.0), min_width=220)
+                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label=WANDER_LABEL(0.0), min_width=220)
+                secs = gr.Slider(10, 60, value=20, step=1, label=SECS_LABEL(20), min_width=220)
         with gr.Row(equal_height=False):
             with gr.Column(scale=5, min_width=360):
                 status = gr.HTML(banner("wait", "Ready", "pick a record and press Start stream"))
@@ -266,6 +268,9 @@ def build(artifacts: str, api: str | None) -> gr.Blocks:
             "<b>not a medical device</b>.</div>"
         )
         rec.change(describe, rec, info)
+        # values live in the labels: the slider's own number box renders as "- -" in some browsers
+        for slider, fmt in ((noise, NOISE_LABEL), (wander, WANDER_LABEL), (secs, SECS_LABEL)):
+            slider.change(lambda v, fmt=fmt: gr.update(label=fmt(v)), slider, slider, show_progress="hidden")
         run = go.click(stream, inputs=[rec, noise, wander, secs], outputs=[status, gate, ecg, probs, raw])
         stop.click(None, cancels=[run])
     return ui

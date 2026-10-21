@@ -118,6 +118,12 @@ make demo                         # Gradio: replays a test ECG in 1 s chunks, cl
 make loadtest                     # locust, requests/sec on CPU
 ```
 
+**Streaming demo** (`make demo`): a fold-10 ECG is replayed in 1 s chunks and the rolling 10 s window is gated and classified every second. Left: clean record ecg_id 17690, classified STTC, CD and HYP, matching the cardiologist labels (gate error 0.190 vs threshold 0.291). Right: the same record with 0.3 mV of added noise, refused instead of guessed (error 2.734).
+
+| Classified | Refused by the quality gate |
+|---|---|
+| ![demo classified](reports/figures/demo_ok.png) | ![demo refused](reports/figures/demo_low_quality.png) |
+
 `POST /classify` takes a 12 × 1000 array (mV, 100 Hz, leads I, II, III, aVR, aVL, aVF, V1–V6) and returns either
 `{"status": "ok", "labels": [...], "probabilities": {...}, "reconstruction_error": ..., "latency_ms": ...}` or
 `{"status": "low_quality", "message": "signal quality too low", ...}`. Malformed input gets a 422.
