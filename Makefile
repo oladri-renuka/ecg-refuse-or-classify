@@ -2,12 +2,13 @@
 PY     ?= python
 SEEDS  ?= 0 1 2
 FRACS  ?= 0.1 0.25 0.5
-# Deployed classifier: choose it by *validation* AUROC under the budget, never by test.
-CLF    ?= runs/c2_resnet1d/seed0/best.pt
+# Deployed classifier: best *validation* macro AUROC among budget-fitting runs (never test).
+# c1_resnet1d_posweight: val 0.9349 (3-seed mean), ~8 ms p95; seed0 has the best val (0.9352).
+CLF    ?= runs/c1_resnet1d_posweight/seed0/best.pt
 AE     ?= runs/autoencoder/seed0/best.pt
 TRAIN   = $(PY) -m ptbxl_ecg.train
 
-.PHONY: setup data data-zip test baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
+.PHONY: setup data data-zip test baseline c3-baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
 
 setup:            ## install training env
 	pip install -e ".[dev]"
@@ -54,6 +55,10 @@ c3:               ## C3: data efficiency (100% is C1)
 	for m in resnet1d bilstm transformer; do for f in $(FRACS); do \
 	  $(TRAIN) configs/c3_$$m.yaml --seeds $(SEEDS) --set data.train_fraction=$$f; \
 	done; done
+	$(MAKE) c3-baseline
+
+c3-baseline:      ## C3 control: the B0 baseline on the same 10/25/50% subsets (CPU)
+	for f in $(FRACS); do $(TRAIN) configs/c3_baseline.yaml --seeds $(SEEDS) --set data.train_fraction=$$f; done
 
 ae:               ## quality-gate autoencoder
 	$(TRAIN) configs/autoencoder.yaml --seeds $(SEEDS)
@@ -65,7 +70,7 @@ c6:
 	$(PY) -m ptbxl_ecg.experiments.robustness configs/c6_robustness.yaml
 
 gradcam:
-	$(PY) -m ptbxl_ecg.experiments.gradcam runs/c1_resnet1d/seed0/best.pt --stage 2
+	$(PY) -m ptbxl_ecg.experiments.gradcam $(CLF) --stage 2
 
 failures:
 	$(PY) -m ptbxl_ecg.experiments.failures $(dir $(CLF))

@@ -46,7 +46,7 @@ case "$stage" in
     echo "(the venv is activated inside this script; for manual commands run: source $VENV/bin/activate)"
     ;;
   analyze)
-    make c4c5 c6 gradcam failures export report
+    make c3-baseline c4c5 c6 gradcam failures export report
     echo "now copy runs/ reports/ artifacts/ to the laptop (see README > Compute)"
     ;;
   *) echo "usage: $0 {check|train|analyze}"; exit 2 ;;

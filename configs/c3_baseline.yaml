@@ -1,0 +1,5 @@
+# C3 control: the B0 baseline trained on the same fixed subsets as the deep models,
+# so data efficiency is compared like for like. Launch with --set data.train_fraction=<f>.
+inherit: baseline.yaml
+name: "c3_b0_features_hgb_frac{data.train_fraction}"
+experiment: C3
