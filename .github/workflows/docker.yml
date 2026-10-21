@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build serving image (linux/amd64)
         run: docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-quality-gate:ci .
@@ -45,7 +45,7 @@ jobs:
                  and (.probabilities | length == 5)
                  and ([.probabilities[]] | all(. >= 0 and . <= 1))
                  and (.labels == ["STTC", "CD", "HYP"])' ok.json
-          echo "latency inside container: $(jq .latency_ms ok.json) ms" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "single cold request inside container (smoke check, not a benchmark): $(jq .latency_ms ok.json) ms" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Corrupted ECG is refused (same record + 0.3 mV noise)
         run: |
