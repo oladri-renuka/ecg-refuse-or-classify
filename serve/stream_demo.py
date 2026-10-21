@@ -36,7 +36,12 @@ NEGATIVE = "#b8c2cc"
 CSS = """
 .gradio-container {max-width: 1600px !important; margin: 0 auto !important; padding: 8px 40px 32px !important;}
 #controls {padding: 6px; border-radius: 14px;}
-#buttons {gap: 8px; justify-content: center;}
+#go, #stop {align-self: stretch; min-height: 64px; font-size: 1rem;}
+/* sliders: one-line labels, fixed-width value box, no reset arrow or spinners */
+#controls .reset-button {display: none !important;}
+#controls label span, #controls [data-testid="block-info"] {white-space: nowrap;}
+#controls input[type=number] {width: 64px !important; min-width: 64px; text-align: right; -moz-appearance: textfield;}
+#controls input[type=number]::-webkit-inner-spin-button, #controls input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0;}
 #probs {min-height: 330px;}
 .section {margin-top: 10px;}
 #hero h1 {font-size: 1.7rem; margin-bottom: 0.2rem;}
@@ -236,13 +241,13 @@ def build(artifacts: str, api: str | None) -> gr.Blocks:
         )
         with gr.Group(elem_id="controls"):
             with gr.Row(equal_height=True):
-                rec = gr.Dropdown(choices, value=choices[0], label="Test record (PTB-XL fold 10)", scale=4, min_width=280)
-                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label="Gaussian noise (mV)", scale=2, min_width=170)
-                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label="Baseline wander (mV)", scale=2, min_width=170)
-                secs = gr.Slider(10, 60, value=20, step=1, label="Stream length (s)", scale=2, min_width=170)
-                with gr.Column(scale=1, min_width=150, elem_id="buttons"):
-                    go = gr.Button("▶  Start stream", variant="primary")
-                    stop = gr.Button("■  Stop", variant="secondary", size="sm")
+                rec = gr.Dropdown(choices, value=choices[0], label="Test record (PTB-XL fold 10)", scale=5, min_width=320)
+                go = gr.Button("▶  Start stream", variant="primary", scale=1, min_width=150, elem_id="go")
+                stop = gr.Button("■  Stop", variant="secondary", scale=1, min_width=110, elem_id="stop")
+            with gr.Row(equal_height=True):
+                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label="Gaussian noise (mV)", min_width=220)
+                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label="Baseline wander (mV)", min_width=220)
+                secs = gr.Slider(10, 60, value=20, step=1, label="Stream length (s)", min_width=220)
         with gr.Row(equal_height=False):
             with gr.Column(scale=5, min_width=360):
                 status = gr.HTML(banner("wait", "Ready", "pick a record and press Start stream"))
