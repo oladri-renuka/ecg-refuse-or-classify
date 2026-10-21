@@ -1,6 +1,10 @@
 # Real-time ECG classification with a signal-quality gate (PTB-XL)
 
-> **Result:** a 1D ResNet that runs in **8.9 ms p95 on a laptop CPU** reaches **0.932 ± 0.001 macro AUROC** on PTB-XL fold 10 (published benchmark ≈ 0.93), beating a strong feature baseline (0.924 ± 0.001) mainly on MI: **sensitivity 0.80 vs 0.75 at 90% specificity**. The autoencoder quality gate reliably refuses grossly corrupted signals, but it does **not** detect PTB-XL's own annotated noise (AUROC 0.62), and rejecting by it does not improve accuracy.
+> **Results** (PTB-XL fold 10, mean ± std over 3 seeds)
+> - **0.932 ± 0.001 macro AUROC at 8.9 ms p95 on a laptop CPU**, matching the published benchmark (≈ 0.93).
+> - **MI sensitivity 0.80 vs 0.75** for a strong handcrafted-feature baseline at 90% specificity: about 28 more heart attacks caught out of 550.
+> - **The quality gate refuses 100% of signals with ≥ 0.1 mV of added noise** and detects annotated electrode problems at **0.93 AUROC**.
+> - PTB-XL's own annotated noise turns out to be mostly mild (it costs the classifier only 0.007 AUROC). The gate barely detects it (AUROC 0.62), and rejecting by it does not improve accuracy.
 
 | Classified | Refused by the quality gate |
 |---|---|

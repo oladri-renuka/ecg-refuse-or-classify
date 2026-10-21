@@ -30,3 +30,6 @@ build/
 /results.gz
 /results.tgz
 /dist/
+
+# local editor / assistant tooling
+/.claude/
