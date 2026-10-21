@@ -1,0 +1,11 @@
+name,model,n_params,p50_ms,p95_ms,mean_ms,size_mb,threads,hardware,checkpoint
+c1_bilstm,bilstm,2135045,30.08264600066468,32.620512800895085,30.83821522503058,8.549938,4,Apple M4 / Darwin / 10 cores,runs/c1_bilstm/seed0/best.pt
+c1_bilstm_posweight,bilstm,2135045,30.49843749977299,32.645212150600855,30.586918959979812,8.549938,4,Apple M4 / Darwin / 10 cores,runs/c1_bilstm_posweight/seed0/best.pt
+c1_resnet1d,resnet1d,6309253,8.640750000267872,8.849497600385803,8.671561039864173,25.243918,4,Apple M4 / Darwin / 10 cores,runs/c1_resnet1d/seed0/best.pt
+c1_resnet1d_bandpass,resnet1d,6309253,8.632250001028297,8.914085747710487,8.684598535019177,25.243918,4,Apple M4 / Darwin / 10 cores,runs/c1_resnet1d_bandpass/seed0/best.pt
+c1_resnet1d_posweight,resnet1d,6309253,8.643645998745342,8.904593748775369,8.676558369897975,25.243918,4,Apple M4 / Darwin / 10 cores,runs/c1_resnet1d_posweight/seed0/best.pt
+c1_transformer,transformer,837893,0.9725420004542684,1.2942663493959117,1.019329775008373,3.400302,4,Apple M4 / Darwin / 10 cores,runs/c1_transformer/seed0/best.pt
+c1_transformer_posweight,transformer,837893,0.9649374987930059,1.2693857504928017,1.0135139200065169,3.400302,4,Apple M4 / Darwin / 10 cores,runs/c1_transformer_posweight/seed0/best.pt
+c2_bilstm,bilstm,1208069,18.805645502652624,19.578789249499096,18.790440619941364,4.842024,4,Apple M4 / Darwin / 10 cores,runs/c2_bilstm/seed0/best.pt
+c2_resnet1d,resnet1d,11928197,16.668021000441513,18.813702752959216,16.91282580997722,47.715092,4,Apple M4 / Darwin / 10 cores,runs/c2_resnet1d/seed0/best.pt
+c2_transformer,transformer,6407685,3.952812499846914,4.338007699334411,3.9738312500594475,25.71999,4,Apple M4 / Darwin / 10 cores,runs/c2_transformer/seed0/best.pt

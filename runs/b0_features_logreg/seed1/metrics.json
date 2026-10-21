@@ -1,0 +1,42 @@
+{
+  "model": "features+logreg",
+  "n_features": 616,
+  "train_size": 17084,
+  "train_time_s": 61.999123334884644,
+  "val": {
+    "macro_auroc": 0.898493482581143
+  },
+  "test": {
+    "macro_auroc": 0.8911292206846484,
+    "per_class_auroc": {
+      "NORM": 0.91957,
+      "MI": 0.85356,
+      "STTC": 0.91532,
+      "CD": 0.89021,
+      "HYP": 0.87697
+    },
+    "mi_sens_at_90spec": 0.6090909090909091,
+    "macro_f1": 0.6915071146598194,
+    "per_class_f1": {
+      "NORM": 0.83302,
+      "MI": 0.64695,
+      "STTC": 0.72727,
+      "CD": 0.69323,
+      "HYP": 0.55706
+    },
+    "thresholds": {
+      "NORM": 0.400613,
+      "MI": 0.343552,
+      "STTC": 0.308535,
+      "CD": 0.285812,
+      "HYP": 0.296736
+    },
+    "mi_frozen_threshold": 0.42877697944641113,
+    "mi_sens_at_frozen_thr": 0.5945454545454546,
+    "mi_spec_at_frozen_thr": 0.9060945273631841
+  },
+  "name": "b0_features_logreg",
+  "experiment": "B0",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/baseline_logreg.yaml"
+}

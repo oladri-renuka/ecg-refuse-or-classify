@@ -1,0 +1,43 @@
+{
+  "model": "resnet1d",
+  "n_params": 6309253,
+  "best_epoch": 44,
+  "train_size": 17084,
+  "train_time_s": 472.12322211265564,
+  "val": {
+    "macro_auroc": 0.9344428526333566
+  },
+  "test": {
+    "macro_auroc": 0.9325948224903531,
+    "per_class_auroc": {
+      "NORM": 0.94998,
+      "MI": 0.93677,
+      "STTC": 0.93611,
+      "CD": 0.92498,
+      "HYP": 0.91513
+    },
+    "mi_sens_at_90spec": 0.8072727272727273,
+    "macro_f1": 0.7497452471597003,
+    "per_class_f1": {
+      "NORM": 0.86014,
+      "MI": 0.75641,
+      "STTC": 0.76199,
+      "CD": 0.76663,
+      "HYP": 0.60355
+    },
+    "thresholds": {
+      "NORM": 0.670296,
+      "MI": 0.589797,
+      "STTC": 0.651949,
+      "CD": 0.682711,
+      "HYP": 0.489172
+    },
+    "mi_frozen_threshold": 0.5162632465362549,
+    "mi_sens_at_frozen_thr": 0.8072727272727273,
+    "mi_spec_at_frozen_thr": 0.8998756218905473
+  },
+  "name": "c1_resnet1d_posweight",
+  "experiment": "C1",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/c1_resnet1d_posweight.yaml"
+}

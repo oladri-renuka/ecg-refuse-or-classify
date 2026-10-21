@@ -7,7 +7,8 @@ Latency is per 10-second record and includes every sliding window, i.e. the
 exact graph the API runs. Measure on the deployment-class CPU, not the GPU box.
 Inputs may be checkpoints (best.pt) or a run's resolved config.yaml: latency does
 not depend on the weights, so the architecture alone is timed when no checkpoint
-is at hand (e.g. results synced without the large .pt files).
+is at hand (e.g. results synced without the large .pt files). For configs, size_mb
+is the fp32 parameter size, since untrained ONNX files compress zero tensors.
 """
 from __future__ import annotations
 
@@ -133,6 +134,10 @@ def main() -> None:
             module, ckpt = load_checkpoint(ck, "cpu")
             cfg, total_len = ckpt["config"], ckpt["total_len"]
         stats = benchmark_module(module, args.threads, 20, args.n_runs, total_len)
+        if ck.endswith((".yaml", ".yml")):
+            # Untrained weights contain many identical all-zero tensors (zero-init BN gammas
+            # folded into convs) that ONNX stores once, so the file under-reports the size.
+            stats["size_mb"] = count_params(module) * 4 / 1e6
         rows.append({"name": cfg["name"], "model": cfg["model"]["name"], "n_params": count_params(module),
                      **stats, "threads": args.threads, "hardware": hardware(), "checkpoint": ck})
         print(rows[-1], flush=True)

@@ -1,0 +1,42 @@
+{
+  "model": "features+hgb",
+  "n_features": 616,
+  "train_size": 4271,
+  "train_time_s": 11.394861936569214,
+  "val": {
+    "macro_auroc": 0.9187147553043952
+  },
+  "test": {
+    "macro_auroc": 0.9133899807275414,
+    "per_class_auroc": {
+      "NORM": 0.93362,
+      "MI": 0.90269,
+      "STTC": 0.92415,
+      "CD": 0.9073,
+      "HYP": 0.89919
+    },
+    "mi_sens_at_90spec": 0.7072727272727273,
+    "macro_f1": 0.7258956986922462,
+    "per_class_f1": {
+      "NORM": 0.83994,
+      "MI": 0.71466,
+      "STTC": 0.74264,
+      "CD": 0.7312,
+      "HYP": 0.60104
+    },
+    "thresholds": {
+      "NORM": 0.580458,
+      "MI": 0.284663,
+      "STTC": 0.418577,
+      "CD": 0.319003,
+      "HYP": 0.176401
+    },
+    "mi_frozen_threshold": 0.33963361382484436,
+    "mi_sens_at_frozen_thr": 0.7090909090909091,
+    "mi_spec_at_frozen_thr": 0.8961442786069652
+  },
+  "name": "c3_b0_features_hgb_frac0.25",
+  "experiment": "C3",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/c3_baseline.yaml"
+}

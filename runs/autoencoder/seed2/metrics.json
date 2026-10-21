@@ -1,0 +1,25 @@
+{
+  "model": "autoencoder",
+  "n_params": 394380,
+  "best_epoch": 38,
+  "train_size": 13213,
+  "train_time_s": 70.13710474967957,
+  "threshold": 0.2942167818546295,
+  "val": {
+    "clean_mse": 0.098264679312706,
+    "gate_auroc_any": 0.6122551222983855
+  },
+  "test": {
+    "gate_auroc_any": 0.6166148231097839,
+    "gate_auroc_static_noise": 0.4835822523963629,
+    "gate_auroc_burst_noise": 0.6044190665342601,
+    "gate_auroc_baseline_drift": 0.7622305043166485,
+    "gate_auroc_electrodes_problems": 0.9243970315398886,
+    "flag_rate_at_threshold": 0.07367933271547729,
+    "noisy_fraction": 0.23772011121408712
+  },
+  "name": "autoencoder",
+  "experiment": "C4",
+  "seed": 2,
+  "config": "/workspace/ecg-quality-gate/configs/autoencoder.yaml"
+}

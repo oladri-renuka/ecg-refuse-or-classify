@@ -1,0 +1,43 @@
+{
+  "model": "bilstm",
+  "n_params": 2135045,
+  "best_epoch": 22,
+  "train_size": 17084,
+  "train_time_s": 444.9113976955414,
+  "val": {
+    "macro_auroc": 0.9355713301894548
+  },
+  "test": {
+    "macro_auroc": 0.931080124774172,
+    "per_class_auroc": {
+      "NORM": 0.94899,
+      "MI": 0.93608,
+      "STTC": 0.93379,
+      "CD": 0.92385,
+      "HYP": 0.91269
+    },
+    "mi_sens_at_90spec": 0.7890909090909091,
+    "macro_f1": 0.7573281480394295,
+    "per_class_f1": {
+      "NORM": 0.86299,
+      "MI": 0.74472,
+      "STTC": 0.76966,
+      "CD": 0.77001,
+      "HYP": 0.63925
+    },
+    "thresholds": {
+      "NORM": 0.586975,
+      "MI": 0.644749,
+      "STTC": 0.661285,
+      "CD": 0.736407,
+      "HYP": 0.821606
+    },
+    "mi_frozen_threshold": 0.5366408824920654,
+    "mi_sens_at_frozen_thr": 0.7745454545454545,
+    "mi_spec_at_frozen_thr": 0.9092039800995025
+  },
+  "name": "c1_bilstm_posweight",
+  "experiment": "C1",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/c1_bilstm_posweight.yaml"
+}

@@ -1,0 +1,43 @@
+{
+  "model": "resnet1d",
+  "n_params": 6309253,
+  "best_epoch": 36,
+  "train_size": 1708,
+  "train_time_s": 51.18291974067688,
+  "val": {
+    "macro_auroc": 0.9066551489849232
+  },
+  "test": {
+    "macro_auroc": 0.9019276095900919,
+    "per_class_auroc": {
+      "NORM": 0.9313,
+      "MI": 0.89007,
+      "STTC": 0.91702,
+      "CD": 0.88715,
+      "HYP": 0.88411
+    },
+    "mi_sens_at_90spec": 0.6636363636363637,
+    "macro_f1": 0.7066635486516137,
+    "per_class_f1": {
+      "NORM": 0.84271,
+      "MI": 0.68478,
+      "STTC": 0.72971,
+      "CD": 0.6986,
+      "HYP": 0.57752
+    },
+    "thresholds": {
+      "NORM": 0.47536,
+      "MI": 0.334907,
+      "STTC": 0.31336,
+      "CD": 0.32358,
+      "HYP": 0.363322
+    },
+    "mi_frozen_threshold": 0.35875657200813293,
+    "mi_sens_at_frozen_thr": 0.6690909090909091,
+    "mi_spec_at_frozen_thr": 0.8998756218905473
+  },
+  "name": "c3_resnet1d_frac0.1",
+  "experiment": "C3",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/c3_resnet1d.yaml"
+}

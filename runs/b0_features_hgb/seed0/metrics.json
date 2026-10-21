@@ -1,0 +1,42 @@
+{
+  "model": "features+hgb",
+  "n_features": 616,
+  "train_size": 17084,
+  "train_time_s": 23.243908166885376,
+  "val": {
+    "macro_auroc": 0.930979566302678
+  },
+  "test": {
+    "macro_auroc": 0.9252466747402426,
+    "per_class_auroc": {
+      "NORM": 0.94024,
+      "MI": 0.91815,
+      "STTC": 0.93604,
+      "CD": 0.92076,
+      "HYP": 0.91105
+    },
+    "mi_sens_at_90spec": 0.7436363636363637,
+    "macro_f1": 0.7481958307536963,
+    "per_class_f1": {
+      "NORM": 0.85923,
+      "MI": 0.73739,
+      "STTC": 0.77514,
+      "CD": 0.7582,
+      "HYP": 0.61102
+    },
+    "thresholds": {
+      "NORM": 0.50752,
+      "MI": 0.297634,
+      "STTC": 0.349847,
+      "CD": 0.344423,
+      "HYP": 0.148873
+    },
+    "mi_frozen_threshold": 0.3308776021003723,
+    "mi_sens_at_frozen_thr": 0.7490909090909091,
+    "mi_spec_at_frozen_thr": 0.8998756218905473
+  },
+  "name": "b0_features_hgb",
+  "experiment": "B0",
+  "seed": 0,
+  "config": "/workspace/ecg-quality-gate/configs/baseline.yaml"
+}

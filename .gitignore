@@ -25,3 +25,7 @@ __pycache__/
 *.egg-info/
 build/
 .DS_Store
+
+# transfer archives from the GPU pod
+/results.gz
+/results.tgz

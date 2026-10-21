@@ -1,0 +1,43 @@
+{
+  "model": "resnet1d",
+  "n_params": 6309253,
+  "best_epoch": 36,
+  "train_size": 17084,
+  "train_time_s": 439.7404851913452,
+  "val": {
+    "macro_auroc": 0.9352042124847811
+  },
+  "test": {
+    "macro_auroc": 0.9338229653559649,
+    "per_class_auroc": {
+      "NORM": 0.95179,
+      "MI": 0.93825,
+      "STTC": 0.93863,
+      "CD": 0.9276,
+      "HYP": 0.91285
+    },
+    "mi_sens_at_90spec": 0.8054545454545454,
+    "macro_f1": 0.750598609439299,
+    "per_class_f1": {
+      "NORM": 0.86634,
+      "MI": 0.75287,
+      "STTC": 0.75347,
+      "CD": 0.76333,
+      "HYP": 0.61698
+    },
+    "thresholds": {
+      "NORM": 0.49859,
+      "MI": 0.456933,
+      "STTC": 0.289198,
+      "CD": 0.491048,
+      "HYP": 0.248147
+    },
+    "mi_frozen_threshold": 0.32361161708831787,
+    "mi_sens_at_frozen_thr": 0.8036363636363636,
+    "mi_spec_at_frozen_thr": 0.9029850746268657
+  },
+  "name": "c1_resnet1d_bandpass",
+  "experiment": "C1",
+  "seed": 1,
+  "config": "/workspace/ecg-quality-gate/configs/c1_resnet1d_bandpass.yaml"
+}

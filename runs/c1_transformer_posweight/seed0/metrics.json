@@ -1,0 +1,43 @@
+{
+  "model": "transformer",
+  "n_params": 837893,
+  "best_epoch": 43,
+  "train_size": 17084,
+  "train_time_s": 379.1062705516815,
+  "val": {
+    "macro_auroc": 0.9227532122028921
+  },
+  "test": {
+    "macro_auroc": 0.9143135478023122,
+    "per_class_auroc": {
+      "NORM": 0.94013,
+      "MI": 0.89362,
+      "STTC": 0.93385,
+      "CD": 0.90084,
+      "HYP": 0.90314
+    },
+    "mi_sens_at_90spec": 0.6927272727272727,
+    "macro_f1": 0.7267712549643758,
+    "per_class_f1": {
+      "NORM": 0.85617,
+      "MI": 0.7045,
+      "STTC": 0.75686,
+      "CD": 0.72747,
+      "HYP": 0.58885
+    },
+    "thresholds": {
+      "NORM": 0.61107,
+      "MI": 0.554362,
+      "STTC": 0.690903,
+      "CD": 0.604178,
+      "HYP": 0.694278
+    },
+    "mi_frozen_threshold": 0.5795592069625854,
+    "mi_sens_at_frozen_thr": 0.6909090909090909,
+    "mi_spec_at_frozen_thr": 0.900497512437811
+  },
+  "name": "c1_transformer_posweight",
+  "experiment": "C1",
+  "seed": 0,
+  "config": "/workspace/ecg-quality-gate/configs/c1_transformer_posweight.yaml"
+}

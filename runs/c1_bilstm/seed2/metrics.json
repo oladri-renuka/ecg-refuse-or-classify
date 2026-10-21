@@ -1,0 +1,43 @@
+{
+  "model": "bilstm",
+  "n_params": 2135045,
+  "best_epoch": 26,
+  "train_size": 17084,
+  "train_time_s": 457.833322763443,
+  "val": {
+    "macro_auroc": 0.9339894283191802
+  },
+  "test": {
+    "macro_auroc": 0.9290872462114921,
+    "per_class_auroc": {
+      "NORM": 0.94587,
+      "MI": 0.9349,
+      "STTC": 0.93649,
+      "CD": 0.92399,
+      "HYP": 0.90419
+    },
+    "mi_sens_at_90spec": 0.7927272727272727,
+    "macro_f1": 0.7454078444244013,
+    "per_class_f1": {
+      "NORM": 0.85387,
+      "MI": 0.75685,
+      "STTC": 0.7554,
+      "CD": 0.74971,
+      "HYP": 0.61121
+    },
+    "thresholds": {
+      "NORM": 0.529351,
+      "MI": 0.305628,
+      "STTC": 0.376784,
+      "CD": 0.519203,
+      "HYP": 0.36812
+    },
+    "mi_frozen_threshold": 0.29106950759887695,
+    "mi_sens_at_frozen_thr": 0.7872727272727272,
+    "mi_spec_at_frozen_thr": 0.9017412935323383
+  },
+  "name": "c1_bilstm",
+  "experiment": "C1",
+  "seed": 2,
+  "config": "/workspace/ecg-quality-gate/configs/c1_bilstm.yaml"
+}

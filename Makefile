@@ -76,7 +76,8 @@ failures:
 	$(PY) -m ptbxl_ecg.experiments.failures $(dir $(CLF))
 
 latency:          ## p50/p95 CPU latency + size of every C1/C2 model, from run configs (LAPTOP; no checkpoints needed)
-	$(PY) -m ptbxl_ecg.latency runs/c1_*/seed0/config.yaml runs/c2_*/seed0/config.yaml
+	# trained checkpoints when present (true ONNX size), else the run configs
+	$(PY) -m ptbxl_ecg.latency $(or $(wildcard runs/c[12]_*/seed0/best.pt),$(wildcard runs/c[12]_*/seed0/config.yaml))
 
 report:           ## mean ± std tables -> reports/tables + README results block
 	$(PY) -m ptbxl_ecg.experiments.aggregate

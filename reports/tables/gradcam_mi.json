@@ -1,0 +1,76 @@
+{
+  "stage": 2,
+  "mean_st_enrichment": 1.0184930301324688,
+  "cases": [
+    {
+      "ecg_id": 18019,
+      "labels": "MI|STTC",
+      "p_mi": 0.9997876286506653,
+      "st_fraction_of_time": 0.18,
+      "st_enrichment": 1.2194010118643444
+    },
+    {
+      "ecg_id": 18057,
+      "labels": "MI|STTC",
+      "p_mi": 0.9997096657752991,
+      "st_fraction_of_time": 0.234,
+      "st_enrichment": 1.0460577586777189
+    },
+    {
+      "ecg_id": 12169,
+      "labels": "MI",
+      "p_mi": 0.9996384978294373,
+      "st_fraction_of_time": 0.198,
+      "st_enrichment": 1.02539857228597
+    },
+    {
+      "ecg_id": 20317,
+      "labels": "MI",
+      "p_mi": 0.9996109008789062,
+      "st_fraction_of_time": 0.198,
+      "st_enrichment": 1.046846912364767
+    },
+    {
+      "ecg_id": 6552,
+      "labels": "MI",
+      "p_mi": 0.9994033575057983,
+      "st_fraction_of_time": 0.216,
+      "st_enrichment": 1.0303856322058924
+    },
+    {
+      "ecg_id": 21764,
+      "labels": "CD|MI",
+      "p_mi": 0.9990125298500061,
+      "st_fraction_of_time": 0.234,
+      "st_enrichment": 0.757652470189282
+    },
+    {
+      "ecg_id": 8473,
+      "labels": "CD|MI",
+      "p_mi": 0.9989262223243713,
+      "st_fraction_of_time": 0.216,
+      "st_enrichment": 0.9035346684632478
+    },
+    {
+      "ecg_id": 19067,
+      "labels": "MI",
+      "p_mi": 0.998670220375061,
+      "st_fraction_of_time": 0.19,
+      "st_enrichment": 1.0744467377662659
+    },
+    {
+      "ecg_id": 11238,
+      "labels": "MI",
+      "p_mi": 0.9985628724098206,
+      "st_fraction_of_time": 0.18,
+      "st_enrichment": 1.2442493604289162
+    },
+    {
+      "ecg_id": 5856,
+      "labels": "CD|MI",
+      "p_mi": 0.9985390305519104,
+      "st_fraction_of_time": 0.216,
+      "st_enrichment": 0.8369571770782824
+    }
+  ]
+}

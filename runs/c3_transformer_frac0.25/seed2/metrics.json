@@ -1,0 +1,43 @@
+{
+  "model": "transformer",
+  "n_params": 837893,
+  "best_epoch": 47,
+  "train_size": 4271,
+  "train_time_s": 121.53464865684509,
+  "val": {
+    "macro_auroc": 0.902844845256209
+  },
+  "test": {
+    "macro_auroc": 0.8939032282147826,
+    "per_class_auroc": {
+      "NORM": 0.92705,
+      "MI": 0.87131,
+      "STTC": 0.92397,
+      "CD": 0.87305,
+      "HYP": 0.87414
+    },
+    "mi_sens_at_90spec": 0.64,
+    "macro_f1": 0.6933918326013112,
+    "per_class_f1": {
+      "NORM": 0.84015,
+      "MI": 0.66222,
+      "STTC": 0.74019,
+      "CD": 0.67732,
+      "HYP": 0.54709
+    },
+    "thresholds": {
+      "NORM": 0.517546,
+      "MI": 0.251413,
+      "STTC": 0.368873,
+      "CD": 0.300089,
+      "HYP": 0.434223
+    },
+    "mi_frozen_threshold": 0.3701133131980896,
+    "mi_sens_at_frozen_thr": 0.610909090909091,
+    "mi_spec_at_frozen_thr": 0.9110696517412935
+  },
+  "name": "c3_transformer_frac0.25",
+  "experiment": "C3",
+  "seed": 2,
+  "config": "/workspace/ecg-quality-gate/configs/c3_transformer.yaml"
+}
