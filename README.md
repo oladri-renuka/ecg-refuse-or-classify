@@ -111,7 +111,7 @@ _TODO after the final runs. Generate with `make failures` (writes `reports/table
 
 ```bash
 make export                       # artifacts/{classifier,autoencoder}.onnx + meta.json, ONNX parity checked
-make serve                        # or: make docker
+make serve                        # or: make docker (serving image, linux/amd64)
 curl -s localhost:8000/classify -H 'content-type: application/json' \
      -d "{\"signal\": $(python -c 'import json;print(json.dumps([[0.0]*1000]*12))')}"
 make demo                         # Gradio: replays a test ECG in 1 s chunks, classifies the rolling 10 s window
@@ -121,7 +121,12 @@ make loadtest                     # locust, requests/sec on CPU
 `POST /classify` takes a 12 × 1000 array (mV, 100 Hz, leads I, II, III, aVR, aVL, aVF, V1–V6) and returns either
 `{"status": "ok", "labels": [...], "probabilities": {...}, "reconstruction_error": ..., "latency_ms": ...}` or
 `{"status": "low_quality", "message": "signal quality too low", ...}`. Malformed input gets a 422.
-The serving image needs only numpy, scipy and onnxruntime, no torch.
+
+**Docker.** `serve/Dockerfile` is the serving side only: FastAPI, ONNX Runtime, the two exported models and `meta.json` (preprocessing statistics, per-class thresholds and the quality-gate threshold). There's no PyTorch and no training code in it; the Python dependencies are about 150 MB, versus several GB for the training environment. `make docker` builds for `linux/amd64` by default, so an image built on an Apple Silicon Mac also runs on ordinary x86 servers (`DOCKER_PLATFORM=linux/arm64` runs it natively on the Mac). The port comes from `PORT` (default 8000).
+
+**Verified in CI.** `.github/workflows/docker.yml` builds the image on every change to `serve/` or `artifacts/` and starts it. It then checks three responses: a clean fold-10 ECG (ecg_id 17690) must come back `ok` with exactly STTC, CD and HYP, the same record with 0.3 mV of added noise must be refused, and malformed input must get a 422. The job summary reports the image size and in-container latency. The request files are regenerated with `make api-fixture`, which first checks them against the exported models.
+
+**Live demo.** `bash scripts/hf_space_bundle.sh` assembles a Hugging Face Docker Space (Space card in `deploy/huggingface/`, threads set for the free 2-vCPU tier). The same image then serves as a public API demo.
 
 ## Repo layout
 
@@ -139,6 +144,8 @@ src/ptbxl_ecg/
   export.py             serving artifacts
   experiments/          C2 sweep, C4/C5 gate, C6 robustness, Grad-CAM, failure analysis, aggregation
 serve/                  FastAPI app, ONNX pipeline, Gradio demo, Dockerfile, locustfile (not in the wheel)
+deploy/huggingface/     Space card for running the same image as a Hugging Face Docker Space
+.github/workflows/      docker-smoke: build the image, POST real ECGs, assert the responses
 notebooks/      analysis only (reads reports/), never training
 reports/        figures/ and tables/ (generated)
 tests/          unit + integration tests on synthetic data

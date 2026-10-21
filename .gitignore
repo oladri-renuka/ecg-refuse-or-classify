@@ -29,3 +29,4 @@ build/
 # transfer archives from the GPU pod
 /results.gz
 /results.tgz
+/dist/

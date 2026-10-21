@@ -8,7 +8,7 @@ CLF    ?= runs/c1_resnet1d_posweight/seed0/best.pt
 AE     ?= runs/autoencoder/seed0/best.pt
 TRAIN   = $(PY) -m ptbxl_ecg.train
 
-.PHONY: setup data data-zip test baseline c3-baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
+.PHONY: setup data data-zip api-fixture test baseline c3-baseline c1 c2-sweep c2 c3 ae c4c5 c6 gradcam failures latency serve-latency report export serve docker loadtest demo all-gpu
 
 setup:            ## install training env
 	pip install -e ".[dev]"
@@ -91,9 +91,16 @@ serve-latency:    ## end-to-end gate + classifier latency of artifacts/ (run on 
 serve:
 	uvicorn serve.app:app --host 0.0.0.0 --port 8000
 
-docker:
-	docker build -f serve/Dockerfile -t ecg-quality-gate .
-	docker run --rm -p 8000:8000 --cpus 4 ecg-quality-gate
+# linux/amd64 for x86 servers / CI; DOCKER_PLATFORM=linux/arm64 runs natively on Apple Silicon
+DOCKER_PLATFORM ?= linux/amd64
+
+docker:           ## build the serving image (no torch), print its size, run it on :8000
+	docker build --platform $(DOCKER_PLATFORM) -f serve/Dockerfile -t ecg-quality-gate .
+	docker image inspect ecg-quality-gate --format 'image size: {{.Size}} bytes'
+	docker run --rm --platform $(DOCKER_PLATFORM) -p 8000:8000 --cpus 4 ecg-quality-gate
+
+api-fixture:      ## regenerate the one-ECG request the CI smoke test sends
+	$(PY) scripts/make_api_fixture.py
 
 loadtest:         ## requires `make serve` or `make docker` running
 	locust -f serve/locustfile.py --headless -u 16 -r 4 -t 60s --host http://localhost:8000 --csv reports/tables/locust

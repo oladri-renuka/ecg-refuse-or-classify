@@ -1,6 +1,7 @@
 """Serving pipeline: quality gate first, classifier only if the signal passes.
 
-Depends only on numpy, scipy and onnxruntime (no torch), so the container stays small.
+Depends only on numpy and onnxruntime (no torch, no training code), so the container
+stays small. SciPy is imported only for models trained with the bandpass filter.
 Preprocessing here must mirror src/data/preprocess.py; tests/test_serve.py checks that.
 """
 from __future__ import annotations
@@ -10,11 +11,18 @@ from pathlib import Path
 
 import numpy as np
 import onnxruntime as ort
-from scipy.signal import butter, sosfiltfilt
 
 
 class SignalError(ValueError):
     pass
+
+
+def _bandpass_sos(fs: float):
+    try:
+        from scipy.signal import butter
+    except ImportError as exc:  # slim image built without scipy
+        raise RuntimeError("this model was trained with bandpass=true; install scipy in the serving image") from exc
+    return butter(3, [0.5, 40.0], btype="band", fs=fs, output="sos")
 
 
 class _Stage:
@@ -26,10 +34,12 @@ class _Stage:
         self.session = ort.InferenceSession(str(root / meta["file"]), opts, providers=["CPUExecutionProvider"])
         self.mean = np.asarray(meta["norm_mean"], dtype=np.float32)[:, None]
         self.std = np.asarray(meta["norm_std"], dtype=np.float32)[:, None]
-        self.sos = butter(3, [0.5, 40.0], btype="band", fs=fs, output="sos") if meta["bandpass"] else None
+        self.sos = _bandpass_sos(fs) if meta["bandpass"] else None
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         if self.sos is not None:
+            from scipy.signal import sosfiltfilt
+
             x = sosfiltfilt(self.sos, x, axis=-1)
         x = ((x - self.mean) / self.std).astype(np.float32)[None]
         return self.session.run(None, {"ecg": x})[0][0]

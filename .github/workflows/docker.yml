@@ -1,0 +1,65 @@
+# Builds the serving image exactly as deployed (linux/amd64, no torch) and checks that
+# the running container answers POST /classify correctly: "it works in Docker" is
+# verified here, not just claimed.
+name: docker-smoke
+
+on:
+  push:
+    branches: [main]
+    paths: ["serve/**", "artifacts/**", "tests/fixtures/**", ".github/workflows/docker.yml"]
+  pull_request:
+    paths: ["serve/**", "artifacts/**", "tests/fixtures/**", ".github/workflows/docker.yml"]
+  workflow_dispatch:
+
+jobs:
+  build-and-classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build serving image (linux/amd64)
+        run: docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-quality-gate:ci .
+
+      - name: Report image size
+        run: |
+          bytes=$(docker image inspect ecg-quality-gate:ci --format '{{.Size}}')
+          echo "### Serving image: $((bytes / 1000000)) MB (linux/amd64, no PyTorch)" | tee -a "$GITHUB_STEP_SUMMARY"
+          docker history ecg-quality-gate:ci --format '{{.Size}}\t{{.CreatedBy}}' | head -n 12
+
+      - name: Start container and wait for /health
+        run: |
+          docker run -d --name ecg -p 8000:8000 ecg-quality-gate:ci
+          for i in $(seq 1 60); do
+            if curl -fsS localhost:8000/health; then echo; exit 0; fi
+            sleep 1
+          done
+          docker logs ecg
+          exit 1
+
+      - name: Clean ECG is classified (ecg_id 17690, true STTC|CD|HYP)
+        run: |
+          curl -fsS -X POST localhost:8000/classify -H 'content-type: application/json' \
+               --data @tests/fixtures/classify_ok.json | tee ok.json; echo
+          jq -e '.status == "ok"
+                 and (.probabilities | length == 5)
+                 and ([.probabilities[]] | all(. >= 0 and . <= 1))
+                 and (.labels == ["STTC", "CD", "HYP"])' ok.json
+          echo "latency inside container: $(jq .latency_ms ok.json) ms" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Corrupted ECG is refused (same record + 0.3 mV noise)
+        run: |
+          curl -fsS -X POST localhost:8000/classify -H 'content-type: application/json' \
+               --data @tests/fixtures/classify_low_quality.json | tee lq.json; echo
+          jq -e '.status == "low_quality" and .message == "signal quality too low"' lq.json
+
+      - name: Malformed input is rejected with 422
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8000/classify \
+                 -H 'content-type: application/json' -d '{"signal": [[0.0]]}')
+          echo "status: $code"
+          test "$code" = "422"
+
+      - name: Container logs
+        if: always()
+        run: docker logs ecg || true

@@ -1,6 +1,8 @@
-fastapi>=0.110
-uvicorn[standard]>=0.29
-pydantic>=2.6
-numpy>=1.26
-scipy>=1.11
-onnxruntime>=1.17
+# Serving image only: no torch, no training code. Compatible-release pins keep
+# rebuilds reproducible without freezing security fixes.
+fastapi~=0.115
+uvicorn~=0.32
+pydantic~=2.9
+numpy~=2.1
+onnxruntime~=1.20
+# scipy~=1.14      # only if the deployed model has bandpass: true in meta.json
