@@ -34,14 +34,18 @@ POSITIVE = "#0f8a5f"
 NEGATIVE = "#b8c2cc"
 
 CSS = """
-.gradio-container {max-width: 1180px !important; margin: auto;}
+.gradio-container {max-width: 1600px !important; margin: 0 auto !important; padding: 8px 40px 32px !important;}
+#controls {padding: 6px; border-radius: 14px;}
+#buttons {gap: 8px; justify-content: center;}
+#probs {min-height: 330px;}
+.section {margin-top: 10px;}
 #hero h1 {font-size: 1.7rem; margin-bottom: 0.2rem;}
 #hero p {opacity: 0.8; margin-top: 0;}
 .card {border-radius: 14px; padding: 14px 18px; border: 1px solid var(--border-color-primary);
        background: var(--block-background-fill);}
-.banner {border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; gap: 14px;}
+.banner {border-radius: 14px; padding: 18px 22px; min-height: 76px; display: flex; align-items: center; gap: 14px;}
 .banner .icon {font-size: 2rem; line-height: 1;}
-.banner .title {font-size: 1.25rem; font-weight: 700;}
+.banner .title {font-size: 1.35rem; font-weight: 700;}
 .banner .sub {opacity: 0.85; font-size: 0.92rem;}
 .banner.ok {background: #e7f6ee; border: 1px solid #9ad7b8;}
 .banner.ok, .banner.ok * {color: #0b5c3f !important;}
@@ -73,7 +77,7 @@ HEAD = """<script>
 def ecg_figure(window: np.ndarray, fs: int, total: int) -> plt.Figure:
     """Classic ECG paper: 0.2 s / 0.5 mV major grid, 0.04 s / 0.1 mV minor grid."""
     n = len(SHOW_LEADS)
-    fig, axes = plt.subplots(n, 1, figsize=(11, 1.55 * n), sharex=True)
+    fig, axes = plt.subplots(n, 1, figsize=(15, 1.7 * n), sharex=True, dpi=110)
     fig.patch.set_facecolor("white")
     t = np.arange(window.shape[1]) / fs
     for ax, name in zip(axes, SHOW_LEADS):
@@ -82,28 +86,31 @@ def ecg_figure(window: np.ndarray, fs: int, total: int) -> plt.Figure:
         ax.set_xlim(0, total / fs)
         lo, hi = (float(y.min()), float(y.max())) if len(y) else (-1.0, 1.0)
         pad = max(0.3, 0.1 * (hi - lo))
-        ax.set_ylim(min(lo - pad, -0.6), max(hi + pad, 0.6))
-        ax.set_xticks(np.arange(0, total / fs + 1e-9, 0.2), minor=False)
-        ax.set_xticks(np.arange(0, total / fs + 1e-9, 0.04), minor=True)
-        ax.set_yticks(np.arange(np.floor(ax.get_ylim()[0] * 2) / 2, ax.get_ylim()[1], 0.5))
-        ax.set_yticks(np.arange(np.floor(ax.get_ylim()[0] * 10) / 10, ax.get_ylim()[1], 0.1), minor=True)
-        ax.grid(which="major", color="#f0a8a8", linewidth=0.6)
-        ax.grid(which="minor", color="#fbd9d9", linewidth=0.3)
+        y0, y1 = min(lo - pad, -0.6), max(hi + pad, 0.6)
+        ax.set_ylim(y0, y1)
+        # Grid as four line collections: ~1000 tick-based gridlines made each frame take ~1 s.
+        xs, ys = np.arange(0, total / fs + 1e-9, 0.04), np.arange(np.floor(y0 * 10) / 10, y1, 0.1)
+        major_x, major_y = np.isclose(xs / 0.2, np.round(xs / 0.2)), np.isclose(ys / 0.5, np.round(ys / 0.5))
+        ax.vlines(xs[~major_x], y0, y1, colors="#fbd9d9", linewidth=0.3)
+        ax.hlines(ys[~major_y], 0, total / fs, colors="#fbd9d9", linewidth=0.3)
+        ax.vlines(xs[major_x], y0, y1, colors="#f0a8a8", linewidth=0.6)
+        ax.hlines(ys[major_y], 0, total / fs, colors="#f0a8a8", linewidth=0.6)
         ax.tick_params(which="both", length=0, labelleft=False, labelbottom=False)
         for side in ax.spines.values():
             side.set_visible(False)
         ax.plot(t, y, color="#111", linewidth=0.9)
-        ax.text(0.006, 0.86, name, transform=ax.transAxes, fontsize=10, fontweight="bold", color="#7a1c1c")
+        ax.text(0.005, 0.84, name, transform=ax.transAxes, fontsize=12, fontweight="bold", color="#7a1c1c",
+                bbox=dict(facecolor="white", alpha=0.85, edgecolor="none", pad=1.5), zorder=5)
     axes[-1].tick_params(labelbottom=True)
     axes[-1].set_xticks(np.arange(0, total / fs + 1e-9, 1.0))
-    axes[-1].set_xticklabels([f"{s:g}s" for s in np.arange(0, total / fs + 1e-9, 1.0)], fontsize=8, color="#555")
-    fig.subplots_adjust(left=0.01, right=0.995, top=0.99, bottom=0.08, hspace=0.04)
+    axes[-1].set_xticklabels([f"{s:g}s" for s in np.arange(0, total / fs + 1e-9, 1.0)], fontsize=10, color="#555")
+    fig.subplots_adjust(left=0.008, right=0.992, top=0.99, bottom=0.07, hspace=0.04)
     plt.close(fig)
     return fig
 
 
 def prob_figure(result: dict | None, classes: list[str]) -> plt.Figure:
-    fig, ax = plt.subplots(figsize=(5.2, 2.9))
+    fig, ax = plt.subplots(figsize=(7.2, 3.6), dpi=110)
     fig.patch.set_facecolor("white")
     probs = [result["probabilities"][c] for c in classes] if result and result.get("status") == "ok" else [0.0] * len(classes)
     thr = [result["thresholds"][c] for c in classes] if result and result.get("status") == "ok" else [None] * len(classes)
@@ -113,14 +120,14 @@ def prob_figure(result: dict | None, classes: list[str]) -> plt.Figure:
         ax.barh(y, p, color=POSITIVE if (t is not None and p >= t) else NEGATIVE, height=0.62)
         if t is not None:
             ax.plot([t, t], [y - 0.38, y + 0.38], color="#222", linewidth=1.6)
-        ax.text(1.02, y, f"{p:.2f}" if t is not None else "–", va="center", fontsize=9, color="#333")
-    ax.set_yticks(ypos, [f"{c}  {CLASS_NAMES[c]}" for c in classes], fontsize=9)
+        ax.text(1.02, y, f"{p:.2f}" if t is not None else "–", va="center", fontsize=11, color="#333")
+    ax.set_yticks(ypos, [f"{CLASS_NAMES[c]}  ({c})" for c in classes], fontsize=11)
     ax.set_xlim(0, 1.12)
-    ax.set_xticks([0, 0.5, 1.0], ["0", "0.5", "1"], fontsize=8, color="#666")
+    ax.set_xticks([0, 0.5, 1.0], ["0", "0.5", "1"], fontsize=9, color="#666")
     for side in ("top", "right", "left"):
         ax.spines[side].set_visible(False)
     ax.tick_params(axis="y", length=0)
-    ax.set_title("probability  ( | = frozen decision threshold )", fontsize=8.5, color="#666", loc="left")
+    ax.set_title("Class probability   ( black tick = frozen decision threshold )", fontsize=10, color="#555", loc="left")
     fig.tight_layout()
     plt.close(fig)
     return fig
@@ -219,7 +226,7 @@ def build(artifacts: str, api: str | None) -> gr.Blocks:
         f"{i}: ecg_id {e}  ·  {'|'.join(labels_of(i)) or '-'}{'  ·  metadata: noisy' if n else ''}"
         for i, (e, n) in enumerate(zip(ecg_ids, noisy))
     ]
-    with gr.Blocks(title="ECG quality-gate demo") as ui:
+    with gr.Blocks(title="ECG quality-gate demo", fill_width=True) as ui:
         gr.Markdown(
             "# Real-time 12-lead ECG classification with a quality gate\n"
             "A PTB-XL test ECG is replayed in 1-second chunks; every second the latest 10 s are checked by the "
@@ -227,22 +234,24 @@ def build(artifacts: str, api: str | None) -> gr.Blocks:
             "Corrupted signals are **refused instead of guessed**. Add noise or baseline wander to see the gate act.",
             elem_id="hero",
         )
-        with gr.Row(equal_height=False):
-            with gr.Column(scale=4, min_width=300):
-                rec = gr.Dropdown(choices, value=choices[0], label="Test record")
-                info = gr.HTML(describe(choices[0]))
-                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label="Inject Gaussian noise (mV)")
-                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label="Inject baseline wander (mV)")
-                secs = gr.Slider(10, 60, value=20, step=1, label="Stream length (s)")
-                with gr.Row():
+        with gr.Group(elem_id="controls"):
+            with gr.Row(equal_height=True):
+                rec = gr.Dropdown(choices, value=choices[0], label="Test record (PTB-XL fold 10)", scale=4, min_width=280)
+                noise = gr.Slider(0.0, 0.5, value=0.0, step=0.01, label="Gaussian noise (mV)", scale=2, min_width=170)
+                wander = gr.Slider(0.0, 2.0, value=0.0, step=0.05, label="Baseline wander (mV)", scale=2, min_width=170)
+                secs = gr.Slider(10, 60, value=20, step=1, label="Stream length (s)", scale=2, min_width=170)
+                with gr.Column(scale=1, min_width=150, elem_id="buttons"):
                     go = gr.Button("▶  Start stream", variant="primary")
-                    stop = gr.Button("■  Stop", variant="secondary")
-            with gr.Column(scale=8):
-                status = gr.HTML(banner("wait", "Ready", "press Start stream"))
+                    stop = gr.Button("■  Stop", variant="secondary", size="sm")
+        with gr.Row(equal_height=False):
+            with gr.Column(scale=5, min_width=360):
+                status = gr.HTML(banner("wait", "Ready", "pick a record and press Start stream"))
                 gate = gr.HTML(gate_card(None))
-                probs = gr.Plot(prob_figure(None, classes), label="Class probabilities", show_label=False)
+                info = gr.HTML(describe(choices[0]))
+            with gr.Column(scale=6, min_width=420):
+                probs = gr.Plot(prob_figure(None, classes), show_label=False, elem_id="probs")
         gr.Markdown("**Rolling 10-second window**: leads I, II, V2, V5 on standard ECG paper "
-                    "(large squares 0.2 s × 0.5 mV)")
+                    "(large squares 0.2 s × 0.5 mV)", elem_classes=["section"])
         ecg = gr.Plot(ecg_figure(np.zeros((12, 0)), fs, win), show_label=False)
         with gr.Accordion("Raw API response", open=False):
             raw = gr.JSON(label=None)
