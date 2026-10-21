@@ -1,10 +1,13 @@
 """ONNX export + CPU latency benchmark (batch 1, ONNX Runtime, N threads).
 
-    python -m ptbxl_ecg.latency runs/c1_*/seed0/best.pt runs/c2_*/seed0/best.pt   # -> reports/tables/latency.csv
+    python -m ptbxl_ecg.latency runs/c1_*/seed0/config.yaml runs/c2_*/seed0/config.yaml   # -> reports/tables/latency.csv
     python -m ptbxl_ecg.latency --artifacts artifacts                              # deployed pipeline, end to end
 
 Latency is per 10-second record and includes every sliding window, i.e. the
 exact graph the API runs. Measure on the deployment-class CPU, not the GPU box.
+Inputs may be checkpoints (best.pt) or a run's resolved config.yaml: latency does
+not depend on the weights, so the architecture alone is timed when no checkpoint
+is at hand (e.g. results synced without the large .pt files).
 """
 from __future__ import annotations
 
@@ -83,10 +86,10 @@ def hardware() -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("checkpoints", nargs="*")
+    parser.add_argument("runs", nargs="*", help="best.pt checkpoints or run config.yaml files")
     parser.add_argument("--artifacts", default=None, help="benchmark the exported serving pipeline instead")
     parser.add_argument("--threads", type=int, default=4)
-    parser.add_argument("--runs", type=int, default=200)
+    parser.add_argument("--runs", dest="n_runs", type=int, default=200, help="timed iterations")
     parser.add_argument("--out", default="reports/tables/latency.csv")
     args = parser.parse_args()
 
@@ -101,9 +104,9 @@ def main() -> None:
             else np.random.default_rng(0).standard_normal((12, 1000)).astype(np.float32) * 0.2
         meta = json.loads((Path(args.artifacts) / "meta.json").read_text())
         res = {
-            "pipeline_end_to_end": time_fn(lambda: pipe.predict(x, force_classify=True), 20, args.runs),
-            "classifier": benchmark_onnx(Path(args.artifacts) / meta["classifier"]["file"], args.threads, 20, args.runs),
-            "autoencoder": benchmark_onnx(Path(args.artifacts) / meta["gate"]["file"], args.threads, 20, args.runs),
+            "pipeline_end_to_end": time_fn(lambda: pipe.predict(x, force_classify=True), 20, args.n_runs),
+            "classifier": benchmark_onnx(Path(args.artifacts) / meta["classifier"]["file"], args.threads, 20, args.n_runs),
+            "autoencoder": benchmark_onnx(Path(args.artifacts) / meta["gate"]["file"], args.threads, 20, args.n_runs),
             "threads": args.threads,
             "hardware": hardware(),
         }
@@ -113,14 +116,24 @@ def main() -> None:
         print(json.dumps(res, indent=2))
         return
 
-    from ptbxl_ecg.engine import load_checkpoint
+    from ptbxl_ecg.engine import classifier_wrapper, load_checkpoint
+    from ptbxl_ecg.models import build_model
+    from ptbxl_ecg.utils.config import load_config
     from ptbxl_ecg.models import count_params
 
     rows = []
-    for ck in args.checkpoints:
-        module, ckpt = load_checkpoint(ck, "cpu")
-        stats = benchmark_module(module, args.threads, 20, args.runs, ckpt["total_len"])
-        rows.append({"name": ckpt["config"]["name"], "model": ckpt["config"]["model"]["name"], "n_params": count_params(module),
+    for ck in args.runs:
+        if ck.endswith((".yaml", ".yml")):
+            cfg = load_config(ck)
+            if cfg.get("task") != "classifier":
+                continue
+            total_len = 10 * cfg["data"]["sampling_rate"]
+            module = classifier_wrapper(build_model(cfg["model"]), cfg, total_len).eval()
+        else:
+            module, ckpt = load_checkpoint(ck, "cpu")
+            cfg, total_len = ckpt["config"], ckpt["total_len"]
+        stats = benchmark_module(module, args.threads, 20, args.n_runs, total_len)
+        rows.append({"name": cfg["name"], "model": cfg["model"]["name"], "n_params": count_params(module),
                      **stats, "threads": args.threads, "hardware": hardware(), "checkpoint": ck})
         print(rows[-1], flush=True)
     df = pd.DataFrame(rows)

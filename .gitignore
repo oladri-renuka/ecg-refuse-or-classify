@@ -1,12 +1,22 @@
 # Anchored with a leading "/" so they only match at the repo root.
 # (An unanchored "data/" also ignored the src/ptbxl_ecg/data/ package.)
 /data/
-/runs/
+# runs/: commit the small per-run results, not the 25-50 MB checkpoints...
+/runs/*
+!/runs/*/
+/runs/*/*
+!/runs/*/seed*/
+/runs/*/seed*/*
+!/runs/*/seed*/metrics.json
+!/runs/*/seed*/config.yaml
+!/runs/*/seed*/preds.npz
+!/runs/*/seed*/errors.npz
+# ...except the deployed classifier, which Project 3 evaluates with (pinned by tag)
+!/runs/c1_resnet1d_posweight/seed0/best.pt
 /mlruns/
 /mlflow.db
 /wandb/
-/artifacts/*
-!/artifacts/.gitkeep
+# artifacts/ (serving ONNX models + meta.json + demo records) is committed
 /reports/tables/locust*
 __pycache__/
 *.pyc

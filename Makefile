@@ -75,8 +75,8 @@ gradcam:
 failures:
 	$(PY) -m ptbxl_ecg.experiments.failures $(dir $(CLF))
 
-latency:          ## p50/p95 CPU latency + size for every trained model (run on the LAPTOP)
-	$(PY) -m ptbxl_ecg.latency runs/*/seed0/best.pt
+latency:          ## p50/p95 CPU latency + size of every C1/C2 model, from run configs (LAPTOP; no checkpoints needed)
+	$(PY) -m ptbxl_ecg.latency runs/c1_*/seed0/config.yaml runs/c2_*/seed0/config.yaml
 
 report:           ## mean ± std tables -> reports/tables + README results block
 	$(PY) -m ptbxl_ecg.experiments.aggregate
