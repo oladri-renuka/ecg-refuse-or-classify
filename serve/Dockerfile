@@ -1,7 +1,7 @@
 # Serving-only image: FastAPI + ONNX Runtime + exported models (no PyTorch, no training code).
 # Build from the repo root after `make export`. On Apple Silicon, target x86 servers explicitly:
-#   docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-quality-gate .
-#   docker run --rm -p 8000:8000 --cpus 4 ecg-quality-gate
+#   docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-refuse-or-classify .
+#   docker run --rm -p 8000:8000 --cpus 4 ecg-refuse-or-classify
 # PORT is configurable (Hugging Face Docker Spaces route to the port named in the Space card).
 FROM python:3.12-slim
 

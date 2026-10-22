@@ -95,9 +95,9 @@ serve:
 DOCKER_PLATFORM ?= linux/amd64
 
 docker:           ## build the serving image (no torch), print its size, run it on :8000
-	docker build --platform $(DOCKER_PLATFORM) -f serve/Dockerfile -t ecg-quality-gate .
-	docker image inspect ecg-quality-gate --format 'image size: {{.Size}} bytes'
-	docker run --rm --platform $(DOCKER_PLATFORM) -p 8000:8000 --cpus 4 ecg-quality-gate
+	docker build --platform $(DOCKER_PLATFORM) -f serve/Dockerfile -t ecg-refuse-or-classify .
+	docker image inspect ecg-refuse-or-classify --format 'image size: {{.Size}} bytes'
+	docker run --rm --platform $(DOCKER_PLATFORM) -p 8000:8000 --cpus 4 ecg-refuse-or-classify
 
 api-fixture:      ## regenerate the one-ECG request the CI smoke test sends
 	$(PY) scripts/make_api_fixture.py

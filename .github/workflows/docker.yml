@@ -19,17 +19,17 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Build serving image (linux/amd64)
-        run: docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-quality-gate:ci .
+        run: docker build --platform linux/amd64 -f serve/Dockerfile -t ecg-refuse-or-classify:ci .
 
       - name: Report image size
         run: |
-          bytes=$(docker image inspect ecg-quality-gate:ci --format '{{.Size}}')
+          bytes=$(docker image inspect ecg-refuse-or-classify:ci --format '{{.Size}}')
           echo "### Serving image: $((bytes / 1000000)) MB (linux/amd64, no PyTorch)" | tee -a "$GITHUB_STEP_SUMMARY"
-          docker history ecg-quality-gate:ci --format '{{.Size}}\t{{.CreatedBy}}' | head -n 12
+          docker history ecg-refuse-or-classify:ci --format '{{.Size}}\t{{.CreatedBy}}' | head -n 12
 
       - name: Start container and wait for /health
         run: |
-          docker run -d --name ecg -p 8000:8000 ecg-quality-gate:ci
+          docker run -d --name ecg -p 8000:8000 ecg-refuse-or-classify:ci
           for i in $(seq 1 60); do
             if curl -fsS localhost:8000/health; then echo; exit 0; fi
             sleep 1

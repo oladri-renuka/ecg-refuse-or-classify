@@ -216,7 +216,7 @@ make loadtest                     # locust, requests/sec on CPU
 Project 3 reuses this pipeline and classifier as its evaluator by **installing** this repo, so there is exactly one PTB-XL loader:
 
 ```bash
-pip install "ptbxl-ecg @ git+https://github.com/oladri-renuka/ecg-quality-gate.git@v0.1.0"
+pip install "ptbxl-ecg @ git+https://github.com/oladri-renuka/ecg-refuse-or-classify.git@v0.1.0"
 ```
 
 ```python

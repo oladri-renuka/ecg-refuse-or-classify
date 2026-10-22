@@ -18,4 +18,4 @@ aVR, aVL, aVF, V1-V6). Returns the PTB-XL superclass labels with probabilities, 
 Interactive docs at `/docs`.
 
 Research prototype trained on PTB-XL (CC BY 4.0); **not a medical device**.
-Source, training code and evaluation: https://github.com/oladri-renuka/ecg-quality-gate
+Source, training code and evaluation: https://github.com/oladri-renuka/ecg-refuse-or-classify
